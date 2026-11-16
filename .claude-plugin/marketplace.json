@@ -1,0 +1,16 @@
+{
+  "name": "perfect-vibecoding-rules-flutter",
+  "owner": {
+    "name": "abdel-hilali"
+  },
+  "description": "One plugin: battle-tested rules, skills, hooks and templates for vibe-coding Flutter apps with Claude Code.",
+  "plugins": [
+    {
+      "name": "perfect-vibecoding-rules-flutter",
+      "source": "./",
+      "description": "Code rules and checks, session hand-offs under a context budget, working rules, parallel builders, queued analyzer, test and build tools, and a quality gate for Flutter projects.",
+      "category": "development",
+      "tags": ["flutter", "dart", "rules", "skills", "hooks", "templates"]
+    }
+  ]
+}

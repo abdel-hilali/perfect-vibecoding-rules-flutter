@@ -1,0 +1,32 @@
+{
+  "name": "perfect-vibecoding-rules-flutter",
+  "displayName": "Perfect vibe-coding rules for Flutter",
+  "description": "Battle-tested rules for building Flutter apps with Claude Code: code rules and their checks, session hand-offs under a context budget, working with the owner, parallel builder agents, queued analyzer, test and build tools, and a quality gate. Ships skills, three hooks and project templates.",
+  "author": {
+    "name": "abdel-hilali"
+  },
+  "homepage": "https://github.com/abdel-hilali/perfect-vibecoding-rules-flutter",
+  "repository": "https://github.com/abdel-hilali/perfect-vibecoding-rules-flutter",
+  "license": "MIT",
+  "keywords": ["flutter", "dart", "rules", "skills", "hooks", "templates", "workflow", "multi-agent", "quality-gate"],
+  "userConfig": {
+    "save_chats": {
+      "type": "boolean",
+      "title": "Save chats in the project",
+      "description": "Copy each session's transcript into the project folder below. The folder ignores itself in git. Transcripts can hold secrets: never commit or share it.",
+      "default": true
+    },
+    "chats_dir": {
+      "type": "string",
+      "title": "Chats folder",
+      "description": "Folder, relative to the project root, that receives the transcript copies.",
+      "default": "claude-chats"
+    },
+    "context_budget_k": {
+      "type": "string",
+      "title": "Context budget (thousands of tokens)",
+      "description": "Once the context passes this many thousand tokens, Claude writes the handoff and asks for a new session at the next clean point. 0 turns the notice off.",
+      "default": "200"
+    }
+  }
+}
