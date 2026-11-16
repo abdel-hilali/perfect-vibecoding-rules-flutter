@@ -1,0 +1,24 @@
+{
+  "//": "Small limits, as in the good fixture.",
+  "limits": {
+    "file": 80,
+    "testFile": 90,
+    "function": 12,
+    "build": 20
+  },
+  "sizeExceptions": [
+    {
+      "path": "lib/features/orders/presentation/pages/stale_page.dart",
+      "reason": "Was big; split since."
+    },
+    {
+      "path": "lib/features/orders/presentation/pages/growing_page.dart",
+      "reason": "Old screen.",
+      "maxLines": 85
+    },
+    {
+      "path": "lib/gone.dart",
+      "reason": "Deleted since."
+    }
+  ]
+}

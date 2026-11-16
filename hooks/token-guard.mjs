@@ -10,7 +10,8 @@
 // Rules this file keeps:
 // - Silent below the budget: no output, so it costs no tokens.
 // - One notice per step (the budget, then every half budget more), per session. The state file is shared
-//   by every plugin that ships this hook, so two kits never say it twice.
+//   by every plugin that ships this hook, and one marker folder per step lets only one copy speak, so two
+//   kits never say it twice.
 // - Never blocks, never fails the call: any error ends it quietly with exit 0.
 // - Quiet inside subagents: a subagent finishes its brief; only the lead session hands off.
 //
@@ -122,6 +123,13 @@ function main() {
   }
   state.step = step;
   fs.writeFileSync(sfile, JSON.stringify(state));
+  // Two kits that ship this hook run it at the same moment and can both read the old step: only the one that
+  // creates this step's marker folder speaks (mkdir fails when the folder exists).
+  try {
+    fs.mkdirSync(`${sfile}.${step}`);
+  } catch {
+    return;
+  }
 
   const k = Math.round(tokens / 1000);
   const b = Math.round(budget / 1000);

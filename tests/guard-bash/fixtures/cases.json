@@ -1,0 +1,1372 @@
+[
+ {
+  "name": "plain pkill -f",
+  "command": "pkill -f next-server",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "pkill --full",
+  "command": "pkill --full \"node server.js\"",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "short group -fx",
+  "command": "pkill -fx node",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "short group -if",
+  "command": "pkill -if vite",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "signal then -f",
+  "command": "pkill -9 -f \"next dev\"",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "-f after the pattern",
+  "command": "pkill node -f",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "long option abbreviated",
+  "command": "pkill --ful node",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "after cd and &&",
+  "command": "cd app && pkill -f next || true",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "second command after ;",
+  "command": "echo stopping; pkill -f worker",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "on a later line",
+  "command": "cd /srv/app\npkill -f worker\necho done",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "path prefix",
+  "command": "/usr/bin/pkill -f worker",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "backslash alias bypass",
+  "command": "\\pkill -f worker",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "quoted command word",
+  "command": "\"pkill\" -f worker",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "sudo",
+  "command": "sudo pkill -f worker",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "sudo -u user --",
+  "command": "sudo -u deploy -- pkill -f worker",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "env with assignment",
+  "command": "env FOO=1 pkill -f worker",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "nohup in background",
+  "command": "nohup pkill -f worker &",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "timeout with signal option",
+  "command": "timeout -s KILL 5 pkill -f worker",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "nice -n",
+  "command": "nice -n 10 pkill -f worker",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "command builtin",
+  "command": "command pkill -f worker",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "exec",
+  "command": "exec pkill -f worker",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "time keyword",
+  "command": "time pkill -f worker",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "leading assignments",
+  "command": "A=1 B=2 pkill -f worker",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "bash -c",
+  "command": "bash -c \"pkill -f worker\"",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "sh -c after sleep",
+  "command": "sh -c 'sleep 1; pkill -f worker'",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "zsh -lc",
+  "command": "zsh -lc 'pkill -f worker'",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "bash -o pipefail -c",
+  "command": "bash -o pipefail -c 'pkill -f worker'",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "eval",
+  "command": "eval \"pkill -f worker\"",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "nested bash -c twice",
+  "command": "bash -c \"sh -c 'pkill -f worker'\"",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "inside $( )",
+  "command": "echo $(pkill -f worker)",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "inside backticks",
+  "command": "echo `pkill -f worker`",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "backticks inside double quotes run",
+  "command": "git commit -m \"stop `pkill -f worker`\"",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "subshell",
+  "command": "(cd app && pkill -f worker)",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "brace group",
+  "command": "{ pkill -f worker; }",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "if body",
+  "command": "if true; then pkill -f worker; fi",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "for loop body",
+  "command": "for n in a b; do pkill -f \"worker-$n\"; done",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "while loop body",
+  "command": "while true; do pkill -f worker; sleep 1; done",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "case branch",
+  "command": "case $1 in stop) pkill -f worker;; esac",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "function body",
+  "command": "stop() { pkill -f worker; }; stop",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "xargs pkill -f",
+  "command": "printf 'a\\nb\\n' | xargs pkill -f",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "heredoc fed to bash",
+  "command": "bash <<'EOF'\npkill -f worker\nEOF",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "here-string fed to sh",
+  "command": "sh <<< 'pkill -f worker'",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "echo piped to bash",
+  "command": "echo 'pkill -f worker' | bash",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "unquoted heredoc runs its backticks",
+  "command": "cat <<EOF > notes.txt\nstopped: `pkill -f worker`\nEOF",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "unterminated quote still read",
+  "command": "pkill -f \"worker",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "watch runs a shell string",
+  "command": "watch -n 5 pkill -f worker",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "setsid wrapper",
+  "command": "setsid pkill -f worker",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "after [[ ]] &&",
+  "command": "[[ -n $DEBUG ]] && pkill -f worker",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "kill $(pgrep -f)",
+  "command": "kill $(pgrep -f next-server)",
+  "expect": "deny",
+  "kind": "pgrep"
+ },
+ {
+  "name": "kill -9 quoted sub",
+  "command": "kill -9 \"$(pgrep -f 'next dev')\"",
+  "expect": "deny",
+  "kind": "pgrep"
+ },
+ {
+  "name": "kill backticks",
+  "command": "kill `pgrep -f worker`",
+  "expect": "deny",
+  "kind": "pgrep"
+ },
+ {
+  "name": "pgrep -f | xargs kill",
+  "command": "pgrep -f worker | xargs kill",
+  "expect": "deny",
+  "kind": "pgrep"
+ },
+ {
+  "name": "xargs -r kill -9",
+  "command": "pgrep -f worker | xargs -r kill -9",
+  "expect": "deny",
+  "kind": "pgrep"
+ },
+ {
+  "name": "xargs -I{} kill {}",
+  "command": "pgrep -f worker | xargs -I{} kill {}",
+  "expect": "deny",
+  "kind": "pgrep"
+ },
+ {
+  "name": "xargs sh -c kill",
+  "command": "pgrep --full worker | xargs sh -c 'kill \"$@\"' _",
+  "expect": "deny",
+  "kind": "pgrep"
+ },
+ {
+  "name": "variable then kill",
+  "command": "pid=$(pgrep -f worker); kill \"$pid\"",
+  "expect": "deny",
+  "kind": "pgrep"
+ },
+ {
+  "name": "variable with head, then kill",
+  "command": "PIDS=$(pgrep -f worker | head -1) && kill -TERM $PIDS",
+  "expect": "deny",
+  "kind": "pgrep"
+ },
+ {
+  "name": "for over pgrep -f",
+  "command": "for p in $(pgrep -f worker); do kill $p; done",
+  "expect": "deny",
+  "kind": "pgrep"
+ },
+ {
+  "name": "pipe into while read",
+  "command": "pgrep -f worker | while read p; do kill \"$p\"; done",
+  "expect": "deny",
+  "kind": "pgrep"
+ },
+ {
+  "name": "done < <(pgrep -f)",
+  "command": "while read p; do kill \"$p\"; done < <(pgrep -f worker)",
+  "expect": "deny",
+  "kind": "pgrep"
+ },
+ {
+  "name": "inside sh -c",
+  "command": "sh -c 'kill $(pgrep -f worker)'",
+  "expect": "deny",
+  "kind": "pgrep"
+ },
+ {
+  "name": "/bin/kill",
+  "command": "/bin/kill $(pgrep -f worker)",
+  "expect": "deny",
+  "kind": "pgrep"
+ },
+ {
+  "name": "loop over a variable of pgrep -f PIDs",
+  "command": "pids=$(pgrep -f x); for p in $pids; do kill $p; done",
+  "expect": "deny",
+  "kind": "pgrep"
+ },
+ {
+  "name": "while read from a here-string",
+  "command": "pids=$(pgrep -f x); while read p; do kill $p; done <<< \"$pids\"",
+  "expect": "deny",
+  "kind": "pgrep"
+ },
+ {
+  "name": "while read from an unquoted heredoc",
+  "command": "pids=$(pgrep -f x); while read p; do kill $p; done <<EOF\n$pids\nEOF",
+  "expect": "deny",
+  "kind": "pgrep"
+ },
+ {
+  "name": "variable echoed into xargs kill",
+  "command": "pids=$(pgrep -f x); echo $pids | xargs kill",
+  "expect": "deny",
+  "kind": "pgrep"
+ },
+ {
+  "name": "array of pgrep -f PIDs",
+  "command": "P=($(pgrep -f x)); kill \"${P[@]}\"",
+  "expect": "deny",
+  "kind": "pgrep"
+ },
+ {
+  "name": "declare -a array",
+  "command": "declare -a P=($(pgrep -f x)); kill ${P[*]}",
+  "expect": "deny",
+  "kind": "pgrep"
+ },
+ {
+  "name": "read from a process substitution",
+  "command": "read -r P < <(pgrep -f x); kill $P",
+  "expect": "deny",
+  "kind": "pgrep"
+ },
+ {
+  "name": "mapfile from a process substitution",
+  "command": "mapfile -t P < <(pgrep -f x); kill \"${P[@]}\"",
+  "expect": "deny",
+  "kind": "pgrep"
+ },
+ {
+  "name": "read from a heredoc",
+  "command": "pids=$(pgrep -f x); read P <<EOF\n$pids\nEOF\nkill $P",
+  "expect": "deny",
+  "kind": "pgrep"
+ },
+ {
+  "name": "xargs kill fed by a process substitution",
+  "command": "xargs kill < <(pgrep -f worker)",
+  "expect": "deny",
+  "kind": "pgrep"
+ },
+ {
+  "name": "xargs kill fed by a here-string",
+  "command": "xargs kill <<< \"$(pgrep -f worker)\"",
+  "expect": "deny",
+  "kind": "pgrep"
+ },
+ {
+  "name": "cat heredoc piped to bash",
+  "command": "cat <<'EOF' | bash\npkill -f worker\nEOF",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "cat - heredoc piped to bash",
+  "command": "cat - <<'EOF' | bash\npkill -f worker\nEOF",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "read from pgrep -f, then only echo",
+  "command": "read -r line < <(pgrep -f x); echo \"$line\"",
+  "expect": "none"
+ },
+ {
+  "name": "array of PIDs from a pid file",
+  "command": "P=($(cat /tmp/app.pid)); kill \"${P[@]}\"",
+  "expect": "none"
+ },
+ {
+  "name": "variable of pgrep -f PIDs counted",
+  "command": "pids=$(pgrep -f x); echo \"$pids\" | wc -l",
+  "expect": "none"
+ },
+ {
+  "name": "harmless cat heredoc piped to bash",
+  "command": "cat <<'EOF' | bash\necho hello\nEOF",
+  "expect": "none"
+ },
+ {
+  "name": "quoted heredoc keeps $pids literal",
+  "command": "pids=$(pgrep -f x); while read p; do kill $p; done <<'EOF'\n$pids\nEOF",
+  "expect": "none"
+ },
+ {
+  "name": "unquoted heredoc loop that only echoes",
+  "command": "pids=$(pgrep -f x); while read p; do echo $p; done <<EOF\n$pids\nEOF",
+  "expect": "none"
+ },
+ {
+  "name": "grep for the phrase",
+  "command": "grep \"pkill -f\" notes.md",
+  "expect": "none"
+ },
+ {
+  "name": "echo the phrase",
+  "command": "echo \"never pkill -f\"",
+  "expect": "none"
+ },
+ {
+  "name": "printf the phrase",
+  "command": "printf '%s\\n' 'pkill -f worker'",
+  "expect": "none"
+ },
+ {
+  "name": "commit message in single quotes",
+  "command": "git commit -m 'docs: never use pkill -f'",
+  "expect": "none"
+ },
+ {
+  "name": "quoted heredoc to a file",
+  "command": "cat <<'EOF' > notes.md\nNever run pkill -f here.\nkill $(pgrep -f worker)\nEOF",
+  "expect": "none"
+ },
+ {
+  "name": "heredoc to python",
+  "command": "python3 - <<'EOF'\nprint('pkill -f worker')\nEOF",
+  "expect": "none"
+ },
+ {
+  "name": "node -e string",
+  "command": "node -e \"console.log('pkill -f worker')\"",
+  "expect": "none"
+ },
+ {
+  "name": "pgrep -f alone",
+  "command": "pgrep -f worker",
+  "expect": "none"
+ },
+ {
+  "name": "pgrep -fl alone",
+  "command": "pgrep -fl node",
+  "expect": "none"
+ },
+ {
+  "name": "pgrep -f to check",
+  "command": "pgrep -f worker && echo running",
+  "expect": "none"
+ },
+ {
+  "name": "pgrep -f in an if",
+  "command": "if pgrep -f worker >/dev/null; then echo up; fi",
+  "expect": "none"
+ },
+ {
+  "name": "pgrep -f counted",
+  "command": "pgrep -f worker | wc -l",
+  "expect": "none"
+ },
+ {
+  "name": "pkill -F pidfile",
+  "command": "pkill -F /tmp/app.pid",
+  "expect": "none"
+ },
+ {
+  "name": "pkill -9 by name",
+  "command": "pkill -9 node",
+  "expect": "none"
+ },
+ {
+  "name": "pkill by name",
+  "command": "pkill node",
+  "expect": "none"
+ },
+ {
+  "name": "pkill -u user",
+  "command": "pkill -u deploy node",
+  "expect": "none"
+ },
+ {
+  "name": "pkill -x exact name",
+  "command": "pkill -x node",
+  "expect": "none"
+ },
+ {
+  "name": "kill a PID",
+  "command": "kill 1234",
+  "expect": "none"
+ },
+ {
+  "name": "kill from a pid file",
+  "command": "kill $(cat /tmp/app.pid)",
+  "expect": "none"
+ },
+ {
+  "name": "pgrep without -f then kill",
+  "command": "pid=$(pgrep -x node); kill $pid",
+  "expect": "none"
+ },
+ {
+  "name": "comment holds the phrase",
+  "command": "ls -la # never pkill -f",
+  "expect": "none"
+ },
+ {
+  "name": "command -v pkill",
+  "command": "command -v pkill",
+  "expect": "none"
+ },
+ {
+  "name": "rg for a pattern",
+  "command": "rg -n 'pgrep -f .* | xargs kill' src",
+  "expect": "none"
+ },
+ {
+  "name": "ps listing matched by awk",
+  "command": "ps -eo pid=,args= | awk '$2 == \"node\" {print $1}'",
+  "expect": "none"
+ },
+ {
+  "name": "setsid -f is not pkill",
+  "command": "setsid -f node server.js",
+  "expect": "none"
+ },
+ {
+  "name": "kill -0 only tests a PID",
+  "command": "kill -0 $(pgrep -f worker) && echo alive",
+  "expect": "none"
+ },
+ {
+  "name": "deny wins over the note",
+  "command": "pnpm build && pkill -f next",
+  "expect": "deny",
+  "kind": "pkill"
+ },
+ {
+  "name": "adb uninstall",
+  "command": "adb uninstall com.example.app",
+  "expect": "deny",
+  "kind": "device",
+  "env": "none"
+ },
+ {
+  "name": "adb uninstall -k still removes the app",
+  "command": "adb uninstall -k com.example.app",
+  "expect": "deny",
+  "kind": "device",
+  "env": "none"
+ },
+ {
+  "name": "adb -s <phone serial> uninstall",
+  "command": "adb -s R58M30ABCDE uninstall com.example.app",
+  "expect": "deny",
+  "kind": "device",
+  "env": "none"
+ },
+ {
+  "name": "adb shell pm clear",
+  "command": "adb -d shell pm clear com.example.app",
+  "expect": "deny",
+  "kind": "device",
+  "env": "none"
+ },
+ {
+  "name": "adb shell pm uninstall --user 0",
+  "command": "adb shell pm uninstall --user 0 com.example.app",
+  "expect": "deny",
+  "kind": "device",
+  "env": "none"
+ },
+ {
+  "name": "adb shell \"pm clear\" as one string",
+  "command": "adb shell \"pm clear com.example.app\"",
+  "expect": "deny",
+  "kind": "device",
+  "env": "none"
+ },
+ {
+  "name": "adb shell with a remote && list",
+  "command": "adb shell 'pm clear com.example.app && echo ok'",
+  "expect": "deny",
+  "kind": "device",
+  "env": "none"
+ },
+ {
+  "name": "adb shell settings put",
+  "command": "adb shell settings put global window_animation_scale 0",
+  "expect": "deny",
+  "kind": "device",
+  "env": "none"
+ },
+ {
+  "name": "adb shell settings delete",
+  "command": "adb shell settings delete secure example_key",
+  "expect": "deny",
+  "kind": "device",
+  "env": "none"
+ },
+ {
+  "name": "adb shell settings --user 0 reset",
+  "command": "adb shell settings --user 0 reset global untrusted_defaults",
+  "expect": "deny",
+  "kind": "device",
+  "env": "none"
+ },
+ {
+  "name": "adb wait-for-device uninstall",
+  "command": "adb wait-for-device uninstall com.example.app",
+  "expect": "deny",
+  "kind": "device",
+  "env": "none"
+ },
+ {
+  "name": "adb -s <phone serial> wait-for-device shell pm clear",
+  "command": "adb -s R58M30ABCDE wait-for-device shell pm clear com.example.app",
+  "expect": "deny",
+  "kind": "device",
+  "env": "none"
+ },
+ {
+  "name": "adb wait-for-any-device shell settings put",
+  "command": "adb wait-for-any-device shell settings put global window_animation_scale 0",
+  "expect": "deny",
+  "kind": "device",
+  "env": "none"
+ },
+ {
+  "name": "adb wait-for-device install -r",
+  "command": "adb wait-for-device install -r build/app/outputs/flutter-apk/app-release.apk",
+  "expect": "warn",
+  "topics": [
+   "device"
+  ],
+  "env": "none"
+ },
+ {
+  "name": "adb wait-for-device shell getprop reads only",
+  "command": "adb wait-for-device shell getprop sys.boot_completed",
+  "expect": "none",
+  "env": "none"
+ },
+ {
+  "name": "adb shell cmd package clear",
+  "command": "adb shell cmd package clear com.example.app",
+  "expect": "deny",
+  "kind": "device",
+  "env": "none"
+ },
+ {
+  "name": "adb shell cmd settings put",
+  "command": "adb shell cmd settings put system screen_brightness 10",
+  "expect": "deny",
+  "kind": "device",
+  "env": "none"
+ },
+ {
+  "name": "adb exec-out pm clear",
+  "command": "adb exec-out pm clear com.example.app",
+  "expect": "deny",
+  "kind": "device",
+  "env": "none"
+ },
+ {
+  "name": "a remote script piped into adb shell",
+  "command": "echo \"pm clear com.example.app\" | adb shell",
+  "expect": "deny",
+  "kind": "device",
+  "env": "none"
+ },
+ {
+  "name": "a heredoc fed to adb shell",
+  "command": "adb shell <<'EOF'\npm clear com.example.app\nEOF",
+  "expect": "deny",
+  "kind": "device",
+  "env": "none"
+ },
+ {
+  "name": "flutter install removes the installed copy first",
+  "command": "flutter install",
+  "expect": "deny",
+  "kind": "device",
+  "env": "none"
+ },
+ {
+  "name": "flutter install --uninstall-only",
+  "command": "flutter install --uninstall-only",
+  "expect": "deny",
+  "kind": "device",
+  "env": "none"
+ },
+ {
+  "name": "flutter -d <id> install",
+  "command": "flutter -d R58M30ABCDE install",
+  "expect": "deny",
+  "kind": "device",
+  "env": "none"
+ },
+ {
+  "name": "fvm flutter install",
+  "command": "fvm flutter install --release",
+  "expect": "deny",
+  "kind": "device",
+  "env": "none"
+ },
+ {
+  "name": "a Gradle uninstall task",
+  "command": "cd android && ./gradlew uninstallDebug",
+  "expect": "deny",
+  "kind": "device",
+  "env": "none"
+ },
+ {
+  "name": "adb.exe (Windows)",
+  "command": "adb.exe uninstall com.example.app",
+  "expect": "deny",
+  "kind": "device",
+  "env": "none"
+ },
+ {
+  "name": "sudo adb uninstall",
+  "command": "sudo adb uninstall com.example.app",
+  "expect": "deny",
+  "kind": "device",
+  "env": "none"
+ },
+ {
+  "name": "inside bash -c",
+  "command": "bash -c \"adb shell pm clear com.example.app\"",
+  "expect": "deny",
+  "kind": "device",
+  "env": "none"
+ },
+ {
+  "name": "in a loop over the devices",
+  "command": "for d in $(adb devices | tail -n +2 | cut -f1); do adb -s \"$d\" uninstall com.example.app; done",
+  "expect": "deny",
+  "kind": "device",
+  "env": "none"
+ },
+ {
+  "name": "an inline DEVICE_WRITE_OK=1 never allows it",
+  "command": "DEVICE_WRITE_OK=1 adb uninstall com.example.app",
+  "expect": "deny",
+  "kind": "device",
+  "env": "none"
+ },
+ {
+  "name": "a build then an uninstall: the deny wins",
+  "command": "flutter build apk && adb uninstall com.example.app",
+  "expect": "deny",
+  "kind": "device",
+  "env": "none"
+ },
+ {
+  "name": "DEVICE_WRITE_OK=0 in the environment wins over tools.env",
+  "command": "adb uninstall com.example.app",
+  "expect": "deny",
+  "kind": "device",
+  "env": "env-off-file-on"
+ },
+ {
+  "name": "the kit's tools.env (DEVICE_WRITE_OK=0) denies",
+  "command": "adb uninstall com.example.app",
+  "expect": "deny",
+  "kind": "device",
+  "env": "file-off"
+ },
+ {
+  "name": "a project without tools.env denies",
+  "command": "adb shell pm clear com.example.app",
+  "expect": "deny",
+  "kind": "device",
+  "env": "project-empty"
+ },
+ {
+  "name": "allowed by DEVICE_WRITE_OK=1 in the environment",
+  "command": "adb uninstall com.example.app",
+  "expect": "warn",
+  "topics": [
+   "device-write"
+  ],
+  "env": "ok-env"
+ },
+ {
+  "name": "allowed by tools.env",
+  "command": "adb shell pm clear com.example.app",
+  "expect": "warn",
+  "topics": [
+   "device-write"
+  ],
+  "env": "ok-file"
+ },
+ {
+  "name": "allowed by tools.env in the command's folder",
+  "command": "flutter install",
+  "expect": "warn",
+  "topics": [
+   "device-write"
+  ],
+  "env": "ok-cwd"
+ },
+ {
+  "name": "allowed by an export line in tools.env",
+  "command": "adb shell settings put global window_animation_scale 0",
+  "expect": "warn",
+  "topics": [
+   "device-write"
+  ],
+  "env": "ok-export"
+ },
+ {
+  "name": "emulator: adb -s emulator-NNNN uninstall runs",
+  "command": "adb -s emulator-5554 uninstall com.example.app",
+  "expect": "none",
+  "env": "none"
+ },
+ {
+  "name": "emulator: settings put for a large-text check runs",
+  "command": "adb -s emulator-5554 shell settings put system font_scale 1.3",
+  "expect": "none",
+  "env": "none"
+ },
+ {
+  "name": "emulator: pm clear piped into its shell runs",
+  "command": "echo \"pm clear com.example.app\" | adb -s emulator-5554 shell",
+  "expect": "none",
+  "env": "none"
+ },
+ {
+  "name": "emulator: ANDROID_SERIAL right before adb",
+  "command": "ANDROID_SERIAL=emulator-5554 adb shell pm uninstall --user 0 com.example.app",
+  "expect": "none",
+  "env": "none"
+ },
+ {
+  "name": "emulator: flutter install -d emulator-NNNN gets the device note",
+  "command": "flutter install -d emulator-5554",
+  "expect": "warn",
+  "topics": [
+   "device"
+  ],
+  "env": "none"
+ },
+ {
+  "name": "emulator: flutter install --device-id emulator-NNNN",
+  "command": "flutter install --device-id emulator-5556",
+  "expect": "warn",
+  "topics": [
+   "device"
+  ],
+  "env": "none"
+ },
+ {
+  "name": "emulator: a serial that only holds the word",
+  "command": "adb -s my-emulator-5554 shell settings put system font_scale 1.3",
+  "expect": "deny",
+  "kind": "device",
+  "env": "none"
+ },
+ {
+  "name": "emulator: a phone write after && is still denied",
+  "command": "adb -s emulator-5554 uninstall com.example.app && adb uninstall com.example.app",
+  "expect": "deny",
+  "kind": "device",
+  "env": "none"
+ },
+ {
+  "name": "emulator: a phone serial after ; is still denied",
+  "command": "adb -s emulator-5554 shell pm clear com.example.app; adb -s R58M30ABCDE shell pm clear com.example.app",
+  "expect": "deny",
+  "kind": "device",
+  "env": "none"
+ },
+ {
+  "name": "emulator: ANDROID_SERIAL on an earlier command only",
+  "command": "ANDROID_SERIAL=emulator-5554 adb wait-for-device; adb shell pm clear com.example.app",
+  "expect": "deny",
+  "kind": "device",
+  "env": "none"
+ },
+ {
+  "name": "emulator: adb -d ignores ANDROID_SERIAL",
+  "command": "ANDROID_SERIAL=emulator-5554 adb -d uninstall com.example.app",
+  "expect": "deny",
+  "kind": "device",
+  "env": "none"
+ },
+ {
+  "name": "emulator: sudo drops ANDROID_SERIAL",
+  "command": "ANDROID_SERIAL=emulator-5554 sudo adb uninstall com.example.app",
+  "expect": "deny",
+  "kind": "device",
+  "env": "none"
+ },
+ {
+  "name": "emulator: flutter does not read ANDROID_SERIAL",
+  "command": "ANDROID_SERIAL=emulator-5554 flutter install",
+  "expect": "deny",
+  "kind": "device",
+  "env": "none"
+ },
+ {
+  "name": "emulator: adb -t wins over the serial",
+  "command": "adb -s emulator-5554 -t 3 uninstall com.example.app",
+  "expect": "deny",
+  "kind": "device",
+  "env": "none"
+ },
+ {
+  "name": "emulator: flutter takes the last -d",
+  "command": "flutter install -d emulator-5554 -d R58M30ABCDE",
+  "expect": "deny",
+  "kind": "device",
+  "env": "none"
+ },
+ {
+  "name": "q-test.sh -d <serial> drives the app on that device",
+  "command": "scripts/tools/q-test.sh -d R58M30ABCDE integration_test/login_test.dart",
+  "expect": "warn",
+  "topics": [
+   "device"
+  ],
+  "env": "none"
+ },
+ {
+  "name": "q-test.sh on unit tests takes no device",
+  "command": "bash scripts/tools/q-test.sh test/features/orders/orders_controller_test.dart",
+  "expect": "none",
+  "env": "none"
+ },
+ {
+  "name": "flutter run",
+  "command": "flutter run",
+  "expect": "warn",
+  "topics": [
+   "device"
+  ],
+  "env": "none"
+ },
+ {
+  "name": "flutter run -d <id>",
+  "command": "flutter run -d R58M30ABCDE",
+  "expect": "warn",
+  "env": "none",
+  "topics": [
+   "device"
+  ]
+ },
+ {
+  "name": "flutter -d <id> run --release",
+  "command": "flutter -d emulator-5554 run --release",
+  "expect": "warn",
+  "topics": [
+   "device"
+  ],
+  "env": "none"
+ },
+ {
+  "name": "fvm flutter run",
+  "command": "fvm flutter run",
+  "expect": "warn",
+  "topics": [
+   "device"
+  ],
+  "env": "none"
+ },
+ {
+  "name": "flutter drive",
+  "command": "flutter drive --target=test_driver/app.dart",
+  "expect": "warn",
+  "topics": [
+   "device"
+  ],
+  "env": "none"
+ },
+ {
+  "name": "integration tests run on a device",
+  "command": "flutter test integration_test/app_test.dart",
+  "expect": "warn",
+  "topics": [
+   "device"
+  ],
+  "env": "none"
+ },
+ {
+  "name": "adb install -r",
+  "command": "adb install -r build/app/outputs/flutter-apk/app-release.apk",
+  "expect": "warn",
+  "topics": [
+   "device"
+  ],
+  "env": "none"
+ },
+ {
+  "name": "adb install-multiple",
+  "command": "adb -s R58M30ABCDE install-multiple a.apk b.apk",
+  "expect": "warn",
+  "topics": [
+   "device"
+  ],
+  "env": "none"
+ },
+ {
+  "name": "flutter run in the background",
+  "command": "nohup flutter run > runs/run.log 2>&1 &",
+  "expect": "warn",
+  "topics": [
+   "device"
+  ],
+  "env": "none"
+ },
+ {
+  "name": "flutter build apk",
+  "command": "flutter build apk",
+  "expect": "warn",
+  "topics": [
+   "memory"
+  ],
+  "env": "none"
+ },
+ {
+  "name": "flutter build appbundle --release",
+  "command": "flutter build appbundle --release",
+  "expect": "warn",
+  "topics": [
+   "memory"
+  ],
+  "env": "none"
+ },
+ {
+  "name": "fvm flutter build ipa",
+  "command": "fvm flutter build ipa",
+  "expect": "warn",
+  "topics": [
+   "memory"
+  ],
+  "env": "none"
+ },
+ {
+  "name": "a build under timeout",
+  "command": "timeout 1800 flutter build apk --split-debug-info=build/symbols",
+  "expect": "warn",
+  "topics": [
+   "memory"
+  ],
+  "env": "none"
+ },
+ {
+  "name": "the queued build tool",
+  "command": "scripts/tools/q-build.sh apk",
+  "expect": "warn",
+  "topics": [
+   "memory"
+  ],
+  "env": "none"
+ },
+ {
+  "name": "the queued build tool through bash",
+  "command": "bash scripts/tools/q-build.sh appbundle",
+  "expect": "warn",
+  "topics": [
+   "memory"
+  ],
+  "env": "none"
+ },
+ {
+  "name": "a build through bash ram.sh run",
+  "command": "bash ram.sh run --name build -- flutter build apk",
+  "expect": "warn",
+  "topics": [
+   "memory"
+  ],
+  "env": "none"
+ },
+ {
+  "name": "a build through ram.sh run --alone",
+  "command": "ram.sh run --alone -- flutter build web",
+  "expect": "warn",
+  "topics": [
+   "memory"
+  ],
+  "env": "none"
+ },
+ {
+  "name": "emulator -avd",
+  "command": "emulator -avd Pixel_7_API_35",
+  "expect": "warn",
+  "topics": [
+   "emulator"
+  ],
+  "env": "none"
+ },
+ {
+  "name": "emulator @name by its full path",
+  "command": "$ANDROID_HOME/emulator/emulator @Pixel_7 -no-snapshot",
+  "expect": "warn",
+  "topics": [
+   "emulator"
+  ],
+  "env": "none"
+ },
+ {
+  "name": "flutter emulators --launch",
+  "command": "flutter emulators --launch Pixel_7",
+  "expect": "warn",
+  "topics": [
+   "emulator"
+  ],
+  "env": "none"
+ },
+ {
+  "name": "a Gradle assemble task",
+  "command": "cd android && ./gradlew assembleRelease",
+  "expect": "warn",
+  "topics": [
+   "memory"
+  ],
+  "env": "none"
+ },
+ {
+  "name": "flutter run on the web takes memory, not a phone, and stays out of the queue",
+  "command": "flutter run -d chrome",
+  "expect": "warn",
+  "topics": [
+   "run"
+  ],
+  "env": "none"
+ },
+ {
+  "name": "flutter run on the desktop",
+  "command": "flutter run -d linux",
+  "expect": "warn",
+  "topics": [
+   "run"
+  ],
+  "env": "none"
+ },
+ {
+  "name": "a build, then an install",
+  "command": "flutter build apk && adb install -r build/app/outputs/flutter-apk/app-release.apk",
+  "expect": "warn",
+  "topics": [
+   "device",
+   "memory"
+  ],
+  "env": "none"
+ },
+ {
+  "name": "a Gradle install task",
+  "command": "cd android && ./gradlew installDebug",
+  "expect": "warn",
+  "topics": [
+   "device",
+   "memory"
+  ],
+  "env": "none"
+ },
+ {
+  "name": "flutter clean: the note only",
+  "command": "flutter clean",
+  "expect": "note",
+  "topics": [
+   "clean"
+  ],
+  "env": "none"
+ },
+ {
+  "name": "fvm flutter clean, then pub get",
+  "command": "fvm flutter clean && flutter pub get",
+  "expect": "note",
+  "topics": [
+   "clean"
+  ],
+  "env": "none"
+ },
+ {
+  "name": "adb devices",
+  "command": "adb devices",
+  "expect": "none",
+  "env": "none"
+ },
+ {
+  "name": "adb shell pm list packages",
+  "command": "adb shell pm list packages",
+  "expect": "none",
+  "env": "none"
+ },
+ {
+  "name": "adb shell settings get",
+  "command": "adb shell settings get global window_animation_scale",
+  "expect": "none",
+  "env": "none"
+ },
+ {
+  "name": "adb logcat",
+  "command": "adb logcat -d | tail -n 50",
+  "expect": "none",
+  "env": "none"
+ },
+ {
+  "name": "adb shell getprop",
+  "command": "adb shell getprop ro.build.version.sdk",
+  "expect": "none",
+  "env": "none"
+ },
+ {
+  "name": "a bare pm clear is not on a phone",
+  "command": "pm clear com.example.app",
+  "expect": "none",
+  "env": "none"
+ },
+ {
+  "name": "grep for the words",
+  "command": "grep -rn \"adb uninstall\" docs/",
+  "expect": "none",
+  "env": "none"
+ },
+ {
+  "name": "echo the words",
+  "command": "echo \"never run flutter install on the owner's phone\"",
+  "expect": "none",
+  "env": "none"
+ },
+ {
+  "name": "a commit message with the words",
+  "command": "git commit -m \"docs: flutter build notes\"",
+  "expect": "none",
+  "env": "none"
+ },
+ {
+  "name": "flutter analyze",
+  "command": "flutter analyze",
+  "expect": "none",
+  "env": "none"
+ },
+ {
+  "name": "flutter test on a file",
+  "command": "flutter test test/features/orders/orders_controller_test.dart",
+  "expect": "none",
+  "env": "none"
+ },
+ {
+  "name": "flutter pub get",
+  "command": "flutter pub get",
+  "expect": "none",
+  "env": "none"
+ },
+ {
+  "name": "flutter emulators lists them",
+  "command": "flutter emulators",
+  "expect": "none",
+  "env": "none"
+ },
+ {
+  "name": "emulator -list-avds",
+  "command": "emulator -list-avds",
+  "expect": "none",
+  "env": "none"
+ },
+ {
+  "name": "gradlew --stop",
+  "command": "cd android && ./gradlew --stop",
+  "expect": "none",
+  "env": "none"
+ },
+ {
+  "name": "gradlew signingReport",
+  "command": "cd android && ./gradlew signingReport",
+  "expect": "none",
+  "env": "none"
+ },
+ {
+  "name": "ram.sh status",
+  "command": "ram.sh status",
+  "expect": "none",
+  "env": "none"
+ },
+ {
+  "name": "the queued analyzer",
+  "command": "scripts/tools/q-analyze.sh",
+  "expect": "none",
+  "env": "none"
+ },
+ {
+  "name": "the queued tests",
+  "command": "scripts/tools/q-test.sh test/core/theme/system_bars_test.dart",
+  "expect": "none",
+  "env": "none"
+ }
+]

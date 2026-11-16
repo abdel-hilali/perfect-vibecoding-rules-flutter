@@ -1,0 +1,66 @@
+{
+  "@@locale": "en",
+  "appTitle": "Kit app",
+  "commonRetry": "Try again",
+  "commonCancel": "Cancel",
+  "commonConfirm": "Confirm",
+  "commonBack": "Back",
+  "commonLoading": "Loading",
+  "commonPressBackAgain": "Press back again to leave",
+  "commonErrorTitle": "Something went wrong",
+  "commonErrorNetwork": "No connection. Check your internet and try again.",
+  "commonErrorTimeout": "The server took too long to answer. Try again.",
+  "commonErrorUnauthorized": "Your session has ended. Sign in again.",
+  "commonErrorForbidden": "You do not have access to this.",
+  "commonErrorNotFound": "This is no longer available.",
+  "commonErrorConflict": "This was changed somewhere else. Reload and try again.",
+  "commonErrorValidation": "Some information is not valid.",
+  "commonErrorRateLimit": "Too many attempts. Wait a moment and try again.",
+  "commonErrorServer": "The server had a problem. Try again later.",
+  "commonErrorUnknown": "Something went wrong. Try again.",
+  "commonImageUnavailable": "Image unavailable",
+  "navOrders": "Orders",
+  "navSettings": "Settings",
+  "authSignInTitle": "Sign in",
+  "authSignInSoonTitle": "Sign-in is coming",
+  "authSignInSoonBody": "This screen opens once the backend serves sign-in.",
+  "ordersTitle": "Orders",
+  "ordersEmptyTitle": "No orders yet",
+  "ordersEmptyBody": "New orders show up here.",
+  "ordersErrorDisabled": "Orders are turned off for this account.",
+  "ordersLoadMoreFailed": "Could not load more orders.",
+  "ordersNumber": "Order {number}",
+  "@ordersNumber": {
+    "placeholders": {
+      "number": {"type": "String", "example": "1042"}
+    }
+  },
+  "ordersItemCount": "{count, plural, =0{No items} =1{1 item} other{{count} items}}",
+  "@ordersItemCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "ordersPlacedOn": "Placed on {date}",
+  "@ordersPlacedOn": {
+    "placeholders": {
+      "date": {"type": "DateTime", "format": "yMMMd"}
+    }
+  },
+  "ordersStatusPending": "Pending",
+  "ordersStatusPaid": "Paid",
+  "ordersStatusShipped": "Shipped",
+  "ordersStatusCancelled": "Cancelled",
+  "ordersStatusUnknown": "Unknown",
+  "settingsTitle": "Settings",
+  "settingsThemeSection": "Appearance",
+  "settingsThemeSystem": "Same as the phone",
+  "settingsThemeLight": "Light",
+  "settingsThemeDark": "Dark",
+  "settingsLanguageSection": "Language",
+  "settingsLanguageSystem": "Same as the phone",
+  "settingsLanguageEnglish": "English",
+  "settingsLanguageFrench": "Français",
+  "settingsLanguageArabic": "العربية",
+  "settingsSaveFailed": "Could not save this setting."
+}

@@ -1,0 +1,15 @@
+# Chat transcripts saved by the save-chat hook while you work on the kit. They can hold secrets: never commit them.
+claude-chats/
+# Working files: briefs, reports, logs and backups (the kit's rules keep them in runs/<topic>/).
+runs/
+# Dart output, when a check runs inside the kit. Not .env.*: the starter ships assets/.env.example.
+.dart_tool/
+build/
+# Personal Claude Code settings.
+.claude/settings.local.json
+CLAUDE.local.md
+# OS and editor noise.
+.DS_Store
+Thumbs.db
+*.swp
+*~

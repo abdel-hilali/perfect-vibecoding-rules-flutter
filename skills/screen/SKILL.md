@@ -52,8 +52,8 @@ Flutter:
 - **Edges (F9).** The page paints its background edge to edge. The top bar paints under the status bar and pads
   itself; a bottom bar is `DecoratedBox(color)` > `SafeArea(top: false)`; a list pads its bottom with
   `N + MediaQuery.paddingOf(context).bottom`; a sheet opens through `showAppSheet`. Never a `SafeArea` around the
-  whole page, never `systemNavigationBarColor` to colour the bottom (Android 15 ignores it). An always-dark screen
-  (camera, media viewer) sets its own `AnnotatedRegion`.
+  whole page; never `systemNavigationBarColor` alone to colour the bottom (Android 15 ignores it: paint under the
+  bar). An always-dark screen (camera, media viewer) sets its own `AnnotatedRegion`.
 - **Icons (F10).** Only through `AppIcons` and `AppIcon` (sizes from `AppIconSize`), one family. No raw
   `Icon(Icons.x)` or `SvgPicture` in a page. An icon-only button has a `tooltip` or a `Semantics` label and a 48 dp
   tap target.
@@ -83,8 +83,8 @@ Before you change a colour, a font, the top bar, the bottom bar or the icons, re
   `StatefulShellRoute.indexedStack` and a new item in `MainShell`'s bar.
 - Gate it in `appRedirect()`, never inside the page. Add its cases to the redirect test
   (`test/core/router/app_redirect_test.dart`): signed out, each role, each gate that applies.
-- Add its path to the routes test (for example `test/core/router/app_router_test.dart`): it fails when a path builds
-  no page or a tab leads nowhere.
+- Add its row to `routes` in the routes test (`test/core/router/app_router_test.dart`; a new tab also goes in
+  `tabs`; none yet? write it first): it fails when a path builds no page, a tab leads nowhere or a route has no row.
 - Tests mirror `lib/`: the controller (loading, data, each failure, a stale answer dropped, no notify after
   dispose), the repository over a fake data source, the model (a good row, a bad row), and the page's widget test
   (the four states, at 320x640 with text scale 1.3, light and dark). A bug fix gets a regression test that fails

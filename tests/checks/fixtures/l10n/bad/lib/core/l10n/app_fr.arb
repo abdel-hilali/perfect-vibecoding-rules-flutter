@@ -1,0 +1,7 @@
+{
+  "ordersTitle": "Commandes",
+  "ordersGreeting": "Bonjour {nom}",
+  "ordersTotal": "Total : {amount",
+  "ordersExtra": "En trop",
+  "authSignIn": "N'attendez pas"
+}

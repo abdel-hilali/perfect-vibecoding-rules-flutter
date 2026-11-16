@@ -1,0 +1,27 @@
+{
+  "//": "Settings of tool/kit/check_structure.dart (docs/RULES.md F1, F2, F8, F10, F11, F12, F17). A key that starts with // is a comment. Change a setting on purpose, with the reason in docs/DECISIONS.md.",
+
+  "//limits": "F1 limits in counted lines: blank lines and comment-only lines do not count. Keep them equal to docs/RULES.md.",
+  "limits": { "file": 350, "testFile": 450, "function": 60, "build": 120 },
+
+  "//controllersDir": "The folder of the ChangeNotifier controllers in presentation/. Older apps call it bloc: set \"bloc\" there rather than moving every file at once.",
+  "controllersDir": "controllers",
+
+  "//coreFolders": "Folders allowed under lib/core/ (a file may sit in one of them or below it). A new kind of shared code gets a folder here only with the owner's yes.",
+  "coreFolders": ["common/widgets", "common/data", "config", "errors", "network", "supabase", "router", "storage", "theme", "l10n", "usecases", "permissions"],
+
+  "//featureFolders": "Folders allowed under lib/features/<feature>/, besides presentation/<controllersDir>/ and the <feature>_routes.dart file.",
+  "featureFolders": ["data/datasources", "data/models", "data/repositories", "domain/entities", "domain/repositories", "domain/usecases", "presentation/pages", "presentation/widgets"],
+
+  "//libFiles": "Files allowed directly in lib/ (* matches any part of a name). Everything else goes under lib/core/ or lib/features/.",
+  "libFiles": ["main.dart", "main_*.dart", "app.dart"],
+
+  "//generated": "Generated files: never checked, and left out of the F17 line counts. **/ matches any folders, * any part of a name.",
+  "generated": ["**/*.g.dart", "**/*.freezed.dart", "lib/core/l10n/generated/**", "**/firebase_options.dart"],
+
+  "//sizeExceptions": "Old files tolerated over the F1 limits until someone splits them; only a file that was already too big when these rules arrived gets an entry. Each entry: {\"path\": \"lib/features/orders/presentation/pages/orders_page.dart\", \"reason\": \"why it is tolerated and who splits it\", \"maxLines\": 900}. maxLines is optional: the file fails once it grows past it. An entry that is no longer needed is reported, so remove it.",
+  "sizeExceptions": [],
+
+  "//rules": "Switch a check off with false: a family (\"F11\") or one check (\"F2-import\"). Checks: F1-file, F1-function, F1-build, F1-exception, F2-folder, F2-suffix, F2-name, F2-import, F8-color, F10-icon, F11-text, F12-helper, F17-budget. Off means the rule is wrong for this project: say why in docs/DECISIONS.md.",
+  "rules": { "F1": true, "F2": true, "F8": true, "F10": true, "F11": true, "F12": true, "F17": true }
+}

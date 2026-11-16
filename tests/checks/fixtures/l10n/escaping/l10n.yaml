@@ -1,0 +1,3 @@
+arb-dir: 'i18n'
+template-arb-file: "app_en.arb"
+use-escaping: true

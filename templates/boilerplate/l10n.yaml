@@ -1,0 +1,17 @@
+# gen-l10n settings (F11). app_en.arb is the shape source: every other locale has the same keys and placeholders.
+arb-dir: lib/core/l10n
+template-arb-file: app_en.arb
+output-dir: lib/core/l10n/generated
+output-localization-file: app_localizations.dart
+output-class: AppLocalizations
+# AppLocalizations.of(context) returns a non-null value, so no `!` at every call site.
+nullable-getter: false
+# Formats the generated files: the gate's `dart format --set-exit-if-changed lib test` covers them too, and an
+# unformatted regenerate would fail it.
+format: true
+# gen-l10n falls back to English for a key missing in another locale, without a word. This file lists those keys;
+# check_l10n.dart fails on them.
+untranslated-messages-file: build/untranslated_messages.json
+# gen-l10n still writes AppLocalizations.localizationsDelegates with the flutter_localizations delegates, deprecated
+# since Flutter 3.47. app.dart uses material_ui ones instead; this header keeps the unused list from failing analyze.
+header: '// ignore_for_file: deprecated_member_use - gen-l10n lists the old flutter_localizations delegates; app.dart uses material_ui ones.'

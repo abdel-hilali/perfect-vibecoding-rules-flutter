@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Release builds shrink resources. A notification icon is named only from Dart or from manifest meta-data, so the
+     shrinker sees no use and drops it, and the notification shows a blank square. This file keeps every ic_stat_*. -->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@drawable/ic_stat_*" />

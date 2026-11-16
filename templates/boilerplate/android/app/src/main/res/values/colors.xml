@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Keep in sync with AppColors.light.surface in lib/core/theme/app_colors.dart: the window shows this colour
+     until Flutter draws its first frame, so a different value flashes at every start. -->
+<resources>
+    <color name="app_surface">#FFF7F7F5</color>
+</resources>

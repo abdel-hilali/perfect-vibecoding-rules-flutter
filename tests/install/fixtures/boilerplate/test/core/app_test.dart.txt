@@ -1,0 +1,3 @@
+import 'package:kit_app/core/app.dart';
+
+void main() => runKitApp();

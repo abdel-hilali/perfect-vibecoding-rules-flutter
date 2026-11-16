@@ -1,0 +1,8 @@
+{
+  "@@locale": "fr",
+  "ordersTitle": "Commandes",
+  "ordersGreeting": "Bonjour {name}",
+  "ordersCount": "{count, plural, =0{Aucune commande} =1{Une commande} other{{count} commandes pour {name}}}",
+  "membersRole": "{role, select, admin{Un admin} other{Un membre}}",
+  "authSignIn": "N'attendez pas : connectez-vous"
+}

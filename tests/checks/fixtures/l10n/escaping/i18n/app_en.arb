@@ -1,0 +1,4 @@
+{
+  "codeHint": "Type '{' then {code}",
+  "@codeHint": {"placeholders": {"code": {"type": "String"}}}
+}

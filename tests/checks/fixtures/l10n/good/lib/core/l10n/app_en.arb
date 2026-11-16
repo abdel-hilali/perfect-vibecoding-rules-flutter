@@ -1,0 +1,11 @@
+{
+  "@@locale": "en",
+  "ordersTitle": "Orders",
+  "ordersGreeting": "Hello {name}",
+  "@ordersGreeting": {"placeholders": {"name": {"type": "String"}}},
+  "ordersCount": "{count, plural, =0{No orders} =1{One order} other{{count} orders for {name}}}",
+  "@ordersCount": {"placeholders": {"count": {"type": "int"}, "name": {"type": "String"}}},
+  "membersRole": "{role, select, admin{An admin} other{A member}}",
+  "@membersRole": {"placeholders": {"role": {"type": "String"}}},
+  "authSignIn": "Don't wait: sign in"
+}

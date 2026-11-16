@@ -1,0 +1,4 @@
+{"type":"user","message":{"role":"user","content":"Add the orders screen."}}
+{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"Reading the brief."}],"usage":{"input_tokens":12,"cache_creation_input_tokens":4988,"cache_read_input_tokens":145000,"output_tokens":300}}}
+{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"Writing the page."}],"usage":{"input_tokens":10,"cache_creation_input_tokens":4990,"cache_read_input_tokens":205000,"output_tokens":800}}}
+{"type":"user","message":{"role":"user","content":[{"type":"tool_result","content":"ok"}]}}

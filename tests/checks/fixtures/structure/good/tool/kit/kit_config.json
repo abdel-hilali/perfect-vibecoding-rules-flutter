@@ -1,0 +1,17 @@
+{
+  "//": "Small limits, so the size boundaries stay small: a function of 12 counted lines passes, 13 fails.",
+  "limits": {
+    "file": 80,
+    "testFile": 90,
+    "function": 12,
+    "build": 20
+  },
+  "controllersDir": "controllers",
+  "sizeExceptions": [
+    {
+      "path": "lib/features/legacy/presentation/pages/legacy_page.dart",
+      "reason": "An old screen, too big before the rules; split planned.",
+      "maxLines": 200
+    }
+  ]
+}

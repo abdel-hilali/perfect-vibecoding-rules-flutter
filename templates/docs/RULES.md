@@ -27,11 +27,15 @@ Counted lines: blank lines and comment-only lines do not count.
 - Over a limit? Split by responsibility: extract a widget (a class, never a `_buildX()` helper method), a controller
   helper, a mapper, a use case. Never squeeze lines together.
 - An old file may be tolerated over its limit only in `sizeExceptions` in `tool/kit/kit_config.json`, with the reason,
-  until someone splits it. Only a file that was already too big when these rules arrived gets an entry.
+  until someone splits it. Give the entry a `maxLines` cap at the file's size today, so it cannot grow. Only a file
+  that was already too big when these rules arrived gets an entry.
 - The analyzer runs with the kit's `analysis_options.yaml`: strict casts, inference and raw types; braces on every block;
   `final` for locals never reassigned; `const` where possible; no `print` (use `debugPrint` behind `kDebugMode`, or the
   project's logger); `unawaited(...)` for a future you mean not to wait for. A lint is fixed, never silenced: an
   `// ignore:` needs a one-line reason on the same line.
+- Material comes from the `material_ui` package (Flutter 3.47 and later): import `package:material_ui/material_ui.dart`,
+  never `package:flutter/material.dart`. The old library is deprecated, and its analyzer info fails the gate.
+  `flutter create` already adds `material_ui` to `pubspec.yaml`.
 - Comments say why, in the code's own terms: the constraint, the trap, the reason for an odd choice. Never cite a ticket,
   a decision id, a report, an agent or a job. Bad: `// fix for review item 12`. Good:
   `// The server sends negative ids for local payloads, so 0 is not "missing".`
@@ -194,8 +198,10 @@ the page under them, with icons that stay readable, in both themes.
   status bar and pads itself by the top inset. A bottom bar is `DecoratedBox(color: ...) > SafeArea(top: false)`, so its
   colour runs under the gesture bar. Scroll views pad their end by `N + MediaQuery.paddingOf(context).bottom`.
 - A surface that reaches the bottom edge in another colour (a sheet, a bottom action bar) wraps its own
-  `AnnotatedRegion` with the matching style. Sheets open through ONE `showAppSheet` helper: `useSafeArea: true`, no fixed
-  background colour (the theme's is read on each build), an inner `SafeArea(top: false)`, keyboard padding.
+  `AnnotatedRegion` with the matching style. Sheets open through ONE `showAppSheet` helper: on the root navigator
+  (`useRootNavigator: true`: from a tab, the nearest navigator is the tab's own, and the sheet would end on top of the
+  bottom bar, which stays live), `useSafeArea: true`, no fixed background colour (the theme's is read on each build),
+  an inner `SafeArea(top: false)`, keyboard padding.
 - Always-dark screens set their own `AnnotatedRegion` with the dark style. The splash matches the native splash colours.
 - Native side: `LaunchTheme` and `NormalTheme` in `res/values`, `values-night`, `values-v31` and `values-night-v31`,
   matching the splash; the window background equals the first frame's colour (no flash); no edge-to-edge opt-out
@@ -208,7 +214,8 @@ the page under them, with icons that stay readable, in both themes.
   constants) and the `AppIcon` widget: size from `AppIconSize` (16, 20, 24), colour from tokens. With designer SVGs:
   `assets/icons/common/` for the UI, `assets/icons/nav/` for the bottom bar (`x.svg` inactive, `x_active.svg` active),
   single colour, snake_case, drawn with `BlendMode.srcIn`, precached on the splash. Without a designer set: Lucide.
-  Never a raw `Icon(Icons.x)` or `SvgPicture` in a page.
+  Never a raw `Icon(...)` in a page, whatever it shows (`Icons.x`, `LucideIcons.x`, even `AppIcons.x`), and never a
+  raw `SvgPicture`: the `AppIcon` widget sets the size and the colour.
 - An icon-only button has a `tooltip` or `Semantics(label:)` and a tap target of at least 48 dp.
 - Remove packages the app does not use (`cupertino_icons` is in every new project and often used by nothing).
 - The launcher icon comes from flutter_launcher_icons: an adaptive icon with a background layer, a foreground layer (the
@@ -227,8 +234,11 @@ the page under them, with icons that stay readable, in both themes.
 - No literal user-facing text in widgets, controllers or failures. Tests read the catalog; they never retype a sentence.
 - Keys are camelCase, prefixed by feature: `ordersEmptyTitle`, `authSignInButton`. Every key with a placeholder has its
   `@key` entry with the placeholder's type.
-- `MaterialApp.router` sets `localizationsDelegates` and `supportedLocales` from the generated class, so Material widgets
-  (date pickers, the text selection menu) speak the app's language.
+- `MaterialApp.router` sets `supportedLocales: AppLocalizations.supportedLocales` and `localizationsDelegates` to
+  `[AppLocalizations.delegate, ...GlobalMaterialLocalizations.delegates]` (material_ui's list), so Material widgets
+  (date pickers, the text selection menu) speak the app's language. Never the generated
+  `AppLocalizations.localizationsDelegates`: it still names the flutter_localizations delegates (deprecated since
+  Flutter 3.47), whose `MaterialLocalizations` is not the type material_ui widgets read.
 - Edit every locale together, with small targeted edits. Never rewrite a whole catalog file: keys that other code reads
   get lost. Never read a whole catalog to change one key: find it with `grep -n`.
 - The straight apostrophe (') only, so a search or a test finds the text.
@@ -320,6 +330,21 @@ the page under them, with icons that stay readable, in both themes.
   no mocktail. A fake returns the same shapes the real backend returns (read a real answer first): a fake that invents
   shapes once hid a real bug for weeks.
 - Every bug fix gets a regression test that fails without the fix.
+- **The test budget.** A test earns its place only if it would catch a real bug that no other test catches. As a
+  guide: a page, its four states and its main actions (about 6 to 10 widget tests); a controller, each state and each
+  failure (about 5 to 10); a repository, a success and one test per failure type; a model, a good row and a bad row;
+  `appRedirect`, one table test of every gate; a bug fix, one regression test. More than that needs a reason in the
+  report.
+- Many inputs are one table test (a list of cases in one loop), never one copy per input. The light, dark and
+  320x640 runs of one page are one loop.
+- Never test generated code, constants, plain getters, a hand-written `==` or `copyWith` that only restates the code,
+  Flutter or a package itself, or the text of each locale (`check_l10n.dart` and one catalog test cover it).
+- Before you add a test, search `test/` for one that covers the behaviour (`grep -rn '<class or key>' test/`) and
+  extend it. Never add a test only to raise a count or a coverage number. A review asks for a test only by naming the
+  bug it would catch.
+- The tests stay smaller than the code they test. When `test/` holds more counted lines than `lib/` (a full
+  `check_structure.dart` run warns, and `verify.sh` prints both counts), prune before you add: merge copies, drop
+  duplicates and trivial tests, keep every test that guards behaviour.
 - Contract tests keep files that must agree in agreement: the permissions and their reasons, the version in
   `pubspec.yaml` and the changelog, the native splash colours and the theme.
 - Golden tests, when the project has them, run in their own folder and never block the gate on another machine's fonts.
@@ -327,7 +352,7 @@ the page under them, with icons that stay readable, in both themes.
 
 ## F18 · The quality gate and done
 
-`scripts/tools/verify.sh` = `dart format --set-exit-if-changed lib test` → `flutter analyze` →
+`scripts/tools/verify.sh` = `dart format --output=none --set-exit-if-changed lib test` → `flutter analyze` →
 `dart run tool/kit/check_structure.dart` → `dart run tool/kit/check_l10n.dart` → `flutter test`.
 
 A change is done when its targeted checks pass, with no rule disabled to get there, and every box below holds:

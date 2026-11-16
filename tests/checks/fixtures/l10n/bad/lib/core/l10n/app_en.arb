@@ -1,0 +1,9 @@
+{
+  "ordersTitle": "Orders",
+  "ordersGreeting": "Hello {name}",
+  "ordersTotal": "Total: {amount}",
+  "@ordersTotal": {"placeholders": {"amount": {}, "currency": {"type": "String"}}},
+  "ordersEmpty": "No order yet",
+  "ordersTitle": "Orders again",
+  "authSignIn": "Don’t wait"
+}

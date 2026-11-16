@@ -1,0 +1,2 @@
+// The fake boilerplate's app: the installer test checks only where it lands and how its imports are renamed.
+void runKitApp() {}

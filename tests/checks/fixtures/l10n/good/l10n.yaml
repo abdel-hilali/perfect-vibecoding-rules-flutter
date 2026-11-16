@@ -1,0 +1,4 @@
+# gen-l10n settings; check_l10n.dart reads the same keys.
+arb-dir: lib/core/l10n
+template-arb-file: app_en.arb # the shape source
+output-dir: lib/core/l10n/generated

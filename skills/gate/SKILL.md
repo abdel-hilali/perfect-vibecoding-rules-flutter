@@ -21,6 +21,10 @@ description: Runs the project's quality checks in two tiers - seconds-long targe
 6. **Report real numbers for every leg, and name each leg you skipped and why.** Never say "green" when only verify
    ran.
 7. **The local gate may be the only gate.** CI may be off. Keep the tree buildable at every stop.
+8. **The suite stays lean.** In Tier 2, report its size: the test cases
+   (`grep -rhE '^\s*(test|testWidgets)\(' test | wc -l`) and the counted lines of `test/` against `lib/` (`verify.sh`
+   prints them on its `budget:` line). When the tests outgrow the code, tell the owner and propose a prune by the
+   test budget (F17) before more tests are added.
 
 ## Tier 1: targeted, while working
 
@@ -40,18 +44,17 @@ installed). Their options: `/perfect-vibecoding-rules-flutter:tools`, or `docs/p
 
 ## Tier 2: the full gate, once per batch
 
-1. **Verify.** `scripts/tools/verify.sh` = `dart format --set-exit-if-changed lib test` → `flutter analyze` →
-   `check_structure.dart` → `check_l10n.dart` → `flutter test` (the whole suite, queued). One line per leg with
-   real numbers. A red leg: fix the code, then run verify again.
+1. **Verify.** `scripts/tools/verify.sh` = `dart format --output=none --set-exit-if-changed lib test` →
+   `flutter analyze` → `check_structure.dart` → `check_l10n.dart` → `flutter test` (the whole suite, queued). One
+   line per leg with real numbers. A red leg: fix the code, then run verify again.
 2. **The build, alone in the queue (say it first).** `scripts/tools/q-build.sh apk --debug`. It waits until no other
    heavy job runs, logs to `runs/build/<time>.log`, and prints the last 30 lines and the artifact's path
    (`build/app/outputs/flutter-apk/app-debug.apk`).
 3. **Device tests, only on the owner's yes.** Integration tests (`integration_test/`) build the app, install it on a
    device and drive it: on the owner's phone that replaces the app they are testing. Prefer an emulator (also on
-   the owner's yes: 2 to 4 GB). One file at a time, from the app folder, alone in the queue:
-   `ram.sh run --alone --name device-test -- flutter test integration_test/<file>_test.dart -d <serial>` (without
-   the RAM plugin: the same command without the prefix, once `scripts/tools/q-status.sh` shows nothing heavy). A
-   device test that writes runs against fakes or a test project, never a live backend.
+   the owner's yes: 2 to 4 GB, started outside the queue, as the device playbook says). One file at a time:
+   `scripts/tools/q-test.sh -d <serial> integration_test/<file>_test.dart` runs that one file alone in the queue,
+   under the build memory cap. A device test that writes runs against fakes or a test project, never a live backend.
 4. **The owner's check on a real phone.** The owner installs and looks; you never drive their phone. Give the
    where-to-look table (`/perfect-vibecoding-rules-flutter:working-rules`): the screen, the account, which build
    (debug from their IDE, the APK file at its path, or the store's internal test), what they see, what not to tap.
@@ -63,8 +66,8 @@ The owner releases. You prepare, and say what the release ships before they uplo
 1. **The version** in `pubspec.yaml`: `version: x.y.z+build`. Raise `x.y.z` by what changed, and the build number
    above the last one uploaded: the store refuses an equal or lower one, and a phone refuses to install it over a
    higher one.
-2. **The changelog.** In `docs/CHANGELOG.md`, the "Unreleased" section becomes `## x.y.z+build` with the date from
-   `date`. The contract test that holds the version and the changelog together must pass.
+2. **The changelog.** In `docs/CHANGELOG.md`, the "Unreleased" section becomes `## x.y.z+build - YYYY-MM-DD`, the
+   date from `date`. The contract test that holds the version and the changelog together must pass.
 3. **The build**, alone in the queue (signed with the upload key from `android/key.properties`, never in git; it is
    missing? stop and ask the owner, never sign a release with the debug key):
 
@@ -108,8 +111,8 @@ and offer to keep it on a side branch (`git push origin HEAD:wip-<topic>`, which
 - **Obfuscation renames classes.** A release build breaks code that branches or logs on `runtimeType.toString()`.
 
 In Claude Code: when a command builds the app, runs it on a device or starts an emulator (`flutter build`,
-`flutter run`, `flutter install`, `flutter drive`, `adb install`, `emulator -avd`), the plugin's Bash hook shows the
+`flutter run`, `flutter drive`, an integration test, `adb install`, `emulator -avd`), the plugin's Bash hook shows the
 owner a one-line notice as it starts and gives you a note (too late for that job: say it first, rule 4). It refuses
-`adb uninstall`, `pm clear` and `settings put` unless `DEVICE_WRITE_OK=1`. Run long jobs with the Bash tool's
-background option. Run the full gate in a new session that reads `docs/HANDOFF.md` first, never in the session that
-built the batch.
+`adb uninstall`, `pm clear`, `settings put` and `flutter install` (it uninstalls first) unless `DEVICE_WRITE_OK=1`
+or the command names an emulator (`emulator-NNNN`). Run long jobs with the Bash tool's background option. Run the
+full gate in a new session that reads `docs/HANDOFF.md` first, never in the session that built the batch.

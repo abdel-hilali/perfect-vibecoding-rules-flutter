@@ -1,0 +1,46 @@
+# The analyzer settings of the kit (docs/RULES.md F1). Every rule here is one the code can always satisfy; most are
+# fixed by `dart fix --apply`. A lint is fixed, never silenced: an `// ignore:` needs a one-line reason on the same line.
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  language:
+    strict-casts: true # no silent cast from dynamic: JSON is read through typed helpers (intOf, stringOf...)
+    strict-inference: true # a type the analyzer cannot infer must be written, never a silent dynamic
+    strict-raw-types: true # List<Order>, never a bare List
+  exclude:
+    - build/**
+    - runs/** # scripts, logs and backups (the installer moves the demo test there): never app code
+    - lib/core/l10n/generated/**
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "**/firebase_options.dart"
+    # The platform folders: `flutter analyze` adds each one the app has when it is missing, rewriting this file.
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**
+
+linter:
+  rules:
+    - always_declare_return_types
+    - avoid_dynamic_calls # a call on dynamic is unchecked; parse into a typed model at the JSON edge (F15)
+    - avoid_print # debugPrint behind kDebugMode, or the project's logger
+    - avoid_unnecessary_containers
+    - cancel_subscriptions # every StreamSubscription is cancelled in dispose (F15)
+    - close_sinks # every StreamController is closed
+    - curly_braces_in_flow_control_structures
+    - directives_ordering # dart:, then package:, then relative imports, each sorted: `dart fix` does it
+    - prefer_const_constructors
+    - prefer_const_declarations
+    - prefer_final_fields
+    - prefer_final_locals
+    - prefer_single_quotes
+    - sort_child_properties_last
+    - unawaited_futures # a future you mean not to wait for is wrapped in unawaited(...)
+    - unnecessary_lambdas
+    - use_build_context_synchronously # after an await, check context.mounted before using the context
+    - use_super_parameters
+# Left out on purpose: require_trailing_commas (dart format, Dart 3.7+ style, adds and keeps them itself, so the
+# lint only repeats it); discarded_futures (it flags every `onPressed: () => controller.load()`).

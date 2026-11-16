@@ -11,7 +11,7 @@ description: Works with the owner's phone and with emulators safely - list the d
    the ids Flutter uses (iOS too). Pass the serial to every command (`adb -s <serial>`, `flutter run -d <serial>`):
    with two devices connected, a command without it lands on the wrong one.
 2. **The owner's phone is theirs.** Never install on it, run on it or drive it (taps, `am start`, `am force-stop`)
-   without the owner's yes, unless `docs/DECISIONS.md` allows it (`grep -n -i 'phone\|device' docs/DECISIONS.md`).
+   without the owner's yes, unless `docs/DECISIONS.md` allows it (`grep -n -i -E 'phone|device' docs/DECISIONS.md`).
    An install replaces the app they are testing.
 3. **Never destroy the owner's data.** Never `adb uninstall`, `pm clear` or `pm uninstall` on their phone, and never
    install a differently signed build over their copy: the install fails, and the only way past is an uninstall. The
@@ -22,15 +22,15 @@ description: Works with the owner's phone and with emulators safely - list the d
    same app on the same device.
 6. **Screenshots stay on this computer**, cropped and small, and are deleted after.
 7. **Logs: the app's PID only, never the whole logcat.** The whole log holds other apps' data and costs many tokens.
-8. **Emulators cost 2 to 4 GB.** Start one only on the owner's yes, when memory allows, without saving a snapshot,
-   and close it when the task ends.
+8. **Emulators cost 2 to 4 GB.** Start one only on the owner's yes, when `scripts/tools/q-status.sh` shows nothing
+   heavy, outside the queue (Emulators, step 3), without saving a snapshot, and close it when the task ends.
 9. **Stop a process by PID, never by name.** Never `pkill`, `killall`, or `pgrep -f` fed to a kill.
 
 ## Before you touch a device
 
 ```bash
 adb devices -l                                          # serial, state, model
-ps -eo pid=,args= | grep '[f]lutter_tools.snapshot run' # a flutter run already up, and its -d
+ps -eo pid=,args= | grep -E '[f]lutter_tools[.]snapshot( .*)? (run|attach)( |$)'  # a run, and its -d or --device-id
 grep -n 'applicationId' android/app/build.gradle*       # the app id
 adb -s <serial> shell dumpsys package <app id> | grep -E 'versionName|versionCode|installerPackageName|DEBUGGABLE'
 ```
@@ -57,6 +57,8 @@ adb -s <serial> shell dumpsys package <app id> | grep -E 'versionName|versionCod
   matches, and fails without harm when it does not. Never add `-d` (a downgrade) without asking: an older build may
   not read newer local data.
 - An app bundle (`.aab`) does not install on a phone: it goes to the store, whose internal test track the owner uses.
+- Integration tests (`integration_test/`) build, install and drive the app: the same yes as an install. One file at
+  a time: `scripts/tools/q-test.sh -d <serial> integration_test/<file>_test.dart` (the gate playbook, tier 2, step 3).
 
 ## Screenshots
 
@@ -89,22 +91,35 @@ adb -s <serial> logcat -d -b crash | grep -A 20 '<app id>' | tail -n 60   # afte
 
 1. Ask the owner: an emulator takes 2 to 4 GB while it runs.
 2. Check the machine: `scripts/tools/q-status.sh`. Start only when no heavy job runs and at least 4 GB is free.
-3. Start it detached, with its log in `runs/`, from outside the app folder:
-   `emulator -list-avds`, then
-   `( cd "$HOME" && setsid nohup emulator -avd <name> -no-snapshot-save -no-boot-anim -memory 2048 > <abs path>/runs/<topic>/emulator.log 2>&1 < /dev/null & )`
-   (macOS: `nohup ... & disown`). Never wrap it in `ram.sh run` or a `q-*` tool: the queue would keep a slot and the
-   app folder's lock for the emulator's whole life, and every analyzer, test and build would wait for it.
-4. Wait for the boot: `adb -s emulator-5554 wait-for-device shell 'while [ "$(getprop sys.boot_completed)" != 1 ]; do sleep 2; done'`.
-5. On an emulator you started, settings are yours: dark mode `adb -s emulator-5554 shell cmd uimode night yes`.
-6. Close it when the task ends: `adb -s emulator-5554 emu kill`. If it hangs, find its PID
+3. Start it detached, from outside the app folder, with its log in `runs/` (macOS: `nohup ... &`, then `disown`),
+   and wait for the boot (the first emulator is `emulator-5554`; another one already up makes yours `emulator-5556`:
+   check `adb devices -l`, and use your serial below, or you close someone else's):
+
+   ```bash
+   emulator -list-avds
+   ( cd "$HOME" && setsid nohup emulator -avd <name> -no-snapshot-save -no-boot-anim -memory 2048 \
+       > <project>/runs/<topic>/emulator.log 2>&1 < /dev/null & )
+   adb -s emulator-5554 wait-for-device shell \
+     'while [ "$(getprop sys.boot_completed)" != 1 ]; do sleep 2; done'
+   ```
+
+   Never wrap it in `ram.sh run` or a `q-*` tool: the queue would keep a slot and the app folder's lock for the
+   emulator's whole life, and every analyzer, test and build would wait for it.
+4. On an emulator you started, settings are yours: dark mode `adb -s emulator-5554 shell cmd uimode night yes`,
+   large text `adb -s emulator-5554 shell settings put system font_scale 1.3` (`1.0` after). With the serial in the
+   command, the hook lets them run without `DEVICE_WRITE_OK`. On the owner's phone they still need the owner's yes.
+5. Close it when the task ends: `adb -s emulator-5554 emu kill`. If it hangs, find its PID
    (`ps -eo pid=,args= | grep -- '[-]avd <name>'`), check that it is the one you started, then `kill <pid>`.
 
 `-no-snapshot-save` stops the emulator from writing a multi-GB snapshot on close. iOS (on a Mac): the same rules; a
 simulator you started is yours like an emulator, the owner's iPhone is theirs.
 
-In Claude Code: the plugin's Bash hook refuses `adb uninstall`, `pm clear`, `pm uninstall` and `settings put` unless
-`DEVICE_WRITE_OK=1` is set in the environment or in `scripts/tools/tools.env`: only the owner sets it, never you.
-When a command takes a device or a lot of memory (`flutter run`, `flutter install`, `flutter drive`, `adb install`,
+In Claude Code: the plugin's Bash hook refuses `adb uninstall`, `pm clear`, `pm uninstall`, `settings put` and
+`flutter install` (it uninstalls first) unless `DEVICE_WRITE_OK=1` is set in the environment or in
+`scripts/tools/tools.env`: only on the owner's yes to that very command, and back to 0 right after. On an emulator
+they run without it when the command names its serial: `adb -s emulator-5554 ...`, `flutter install -d emulator-5554`
+or `ANDROID_SERIAL=emulator-5554 adb ...`. Each command counts alone: one with no serial or a phone's stays refused.
+When a command takes a device or a lot of memory (`flutter run`, `flutter drive`, an integration test, `adb install`,
 `emulator -avd`, `flutter build`), the hook shows the owner a one-line notice as it starts and gives you a note: say
 it first. It blocks `pkill -f`. Start long processes with the Bash tool's background option or detached, and open a
 screenshot only after you downscale it.

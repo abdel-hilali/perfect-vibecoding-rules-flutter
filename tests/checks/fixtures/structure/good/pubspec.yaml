@@ -1,0 +1,4 @@
+name: shop
+description: A fixture project for the kit's check scripts.
+environment:
+  sdk: ^3.8.0
